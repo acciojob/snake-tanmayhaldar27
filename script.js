@@ -1,43 +1,26 @@
-// Get the game container element
-const gameContainer = document.getElementById('gameContainer');
+var gameContainer = document.getElementById("gameContainer");
+var food = document.getElementById("pixel1");
+var snakeBody = [];
+var score = 0;
 
-// Snake starting position
-let snakeRow = 20;
-let snakeCol = 1;
+var interval = setInterval(function() {
+  // Move the snake.
+  snakeBody.shift();
+  snakeBody.push(snakeBody[snakeBody.length - 1] + 1);
 
-// Movement direction
-let direction = 'right';
+  // Check if the snake has eaten the food.
+  if (snakeBody[0] == food.id) {
+    food.id = Math.floor(Math.random() * 400) + 1;
+    score++;
+  }
 
-// Function to create the snake body pixel
-function createSnakePixel() {
-	const snakePixel = document.createElement('div');
-	snakePixel.className = 'snakeBodyPixel';
-	const pixelId = 'pixel' + snakeRow + snakeCol;
-	snakePixel.id = pixelId;
-	gameContainer.appendChild(snakePixel);
-}
+  // Check if the snake has hit itself or the edge of the game container.
+  if (snakeBody[0] < 1 || snakeBody[0] > 400 ||
+      snakeBody.indexOf(snakeBody[0] - 1) != -1 ||
+      snakeBody.indexOf(snakeBody[0] + 1) != -1) {
+    clearInterval(interval);
+  }
 
-// Function to move the snake
-function moveSnake() {
-	// Remove the previous snake pixel
-	const previousPixelId = 'pixel' + snakeRow + snakeCol;
-	const previousPixel = document.getElementById(previousPixelId);
-	previousPixel.remove();
-	
-	// Update the snake's position based on the direction
-	if (direction === 'right') {
-		snakeCol++;
-	} else if (direction === 'left') {
-		snakeCol--;
-	} else if (direction === 'up') {
-		snakeRow--;
-	} else if (direction === 'down') {
-		snakeRow++;
-	}
-	
-	// Create a new snake pixel at the updated position
-	createSnakePixel();
-}
-
-// Start the snake movement
-setInterval(moveSnake, 100);
+  // Update the score.
+  document.querySelector(".scoreBoard").textContent = score;
+}, 100);
